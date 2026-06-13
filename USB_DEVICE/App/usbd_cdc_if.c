@@ -20,6 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "usbd_cdc_if.h"
+#include <stdlib.h>
 
 /* USER CODE BEGIN INCLUDE */
 
@@ -94,7 +95,7 @@ uint8_t UserRxBufferFS[APP_RX_DATA_SIZE];
 uint8_t UserTxBufferFS[APP_TX_DATA_SIZE];
 
 /* USER CODE BEGIN PRIVATE_VARIABLES */
-
+extern volatile uint8_t servoAngle;
 /* USER CODE END PRIVATE_VARIABLES */
 
 /**
@@ -261,6 +262,10 @@ static int8_t CDC_Control_FS(uint8_t cmd, uint8_t* pbuf, uint16_t length)
 static int8_t CDC_Receive_FS(uint8_t* Buf, uint32_t *Len)
 {
   /* USER CODE BEGIN 6 */
+  char temp[8];
+  memcpy(temp, Buf, *Len);
+  temp[*Len] = 0;
+  servoAngle = atoi(temp);
   USBD_CDC_SetRxBuffer(&hUsbDeviceFS, &Buf[0]);
   USBD_CDC_ReceivePacket(&hUsbDeviceFS);
   return (USBD_OK);
